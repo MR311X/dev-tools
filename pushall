@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Check if user is logged in
+if ! git config --global user.email > /dev/null || ! git config --global user.name > /dev/null; then
+  echo 'Error: git user is not logged in. Please run `git config --global user.email "you@example.com"` and `git config --global user.name "Your Name"` to configure git user.' >&2
+  exit 1
+fi
+
+# Check which branch is currently in use
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Ask for commit message
+echo "Please enter the commit message:"
+read commit_message
+
+# Add all files to Git
+git add -A
+
+# Show which files are getting committed
+echo "The following files are getting committed:"
+git status --short
+
+# Ask for confirmation before pushing changes
+echo "Are you sure you want to push changes to $current_branch on GitHub? (y/n)"
+read confirm
+if [ "$confirm" != "y" ]; then
+  echo "Aborted."
+  exit 0
+fi
+
+# Commit changes to Git and push to GitHub
+echo "Committing changes and pushing to $current_branch on GitHub..."
+if ! git commit -m "$commit_message" &> /dev/null || ! git push origin "$current_branch" &> /dev/null; then
+  echo "Error: Commit and push failed. Git messages:"
+  git commit -m "$commit_message"
+  git push origin "$current_branch"
+  exit 1
+else
+  echo "Changes have been committed and pushed to $current_branch on GitHub."
+fi
