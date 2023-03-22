@@ -36,18 +36,18 @@ git status --short
 # Ask for confirmation before pushing changes
 echo "Are you sure you want to push changes to $current_branch on GitHub? (y/n)"
 read confirm
-if [ "$confirm" != "y" ]; then
+if [[ "$confirm" =~ ^[Yy]$ ]]; then
+  # Commit changes to Git and push to GitHub
+  echo "Committing changes and pushing to $current_branch on GitHub..."
+  if ! git commit -m "$commit_message" &> /dev/null || ! git push origin "$current_branch" &> /dev/null; then
+    echo "Error: Commit and push failed. Git messages:"
+    git commit -m "$commit_message"
+    git push origin "$current_branch"
+    exit 1
+  else
+    echo "Changes have been committed and pushed to $current_branch on GitHub."
+  fi
+else
   echo "Aborted."
   exit 0
-fi
-
-# Commit changes to Git and push to GitHub
-echo "Committing changes and pushing to $current_branch on GitHub..."
-if ! git commit -m "$commit_message" &> /dev/null || ! git push origin "$current_branch" &> /dev/null; then
-  echo "Error: Commit and push failed. Git messages:"
-  git commit -m "$commit_message"
-  git push origin "$current_branch"
-  exit 1
-else
-  echo "Changes have been committed and pushed to $current_branch on GitHub."
 fi
