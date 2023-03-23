@@ -15,6 +15,21 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+# Parse command line arguments
+force_commit=false
+while getopts ":f" opt; do
+  case $opt in
+    f)
+      force_commit=true
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
 # Ask for commit message
 echo "Please enter the commit message:"
 read commit_message
@@ -22,7 +37,12 @@ read commit_message
 # Add files to Git
 for file in "$@"; do
   if [ -e "$file" ]; then
-    git add "$file"
+    if [ "$force_commit" = true ] || ! grep -q "^$file$" .gitignore; then
+      git add "$file"
+    else
+      echo "Error: $file is in .gitignore. Use -f option to force commit."
+      exit 1
+    fi
   else
     echo "Error: $file does not exist."
     exit 1

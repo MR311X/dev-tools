@@ -14,7 +14,12 @@ echo "Please enter the commit message:"
 read commit_message
 
 # Add all files to Git
-git add -A
+if [[ "$@" == *"-f"* ]]; then
+  # Force add files in .gitignore
+  git add -f .
+else
+  git add -A
+fi
 
 # Show which files are getting committed
 echo "The following files are getting committed:"
