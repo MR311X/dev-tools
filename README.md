@@ -1,8 +1,8 @@
 # dev-tools
 ### A small collection of automation scripts useful for repetitive & tedious tasks.
 
-> Begin by cloning repo to desired location.
-> Follow individual instructions as per script.
+- Begin by cloning repo to desired location.
+- Follow individual instructions as per script.
 
 ## bash scripts
 
